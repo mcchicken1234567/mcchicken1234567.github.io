@@ -26,6 +26,7 @@
 
         .hidden { display: none !important; }
 
+        /* General Card Styling */
         .card {
             background: var(--surface);
             padding: 40px;
@@ -57,8 +58,15 @@
             cursor: pointer;
             width: 100%;
             margin-top: 10px;
+            transition: 0.2s;
         }
 
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-2px);
+        }
+
+        /* Dashboard Grid */
         .dashboard {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -77,13 +85,14 @@
             transition: 0.3s;
         }
 
-        .choice-card:hover { border-color: var(--accent); background: #1c1c21; }
+        .choice-card:hover { border-color: var(--accent); background: #1c1c21; transform: scale(1.05); }
     </style>
 </head>
 <body>
 
     <div id="login-page" class="card">
         <h1 style="color: var(--accent);">FORGE</h1>
+        <p style="color: var(--text-dim);">Developer Access</p>
         <input type="email" id="user-email" placeholder="Email Address">
         <button class="btn" onclick="goToDashboard()">Enter Portal</button>
     </div>
@@ -91,57 +100,77 @@
     <div id="dashboard-page" class="hidden">
         <div style="text-align: center; margin-bottom: 30px;">
             <h2 id="welcome-msg">Welcome!</h2>
-            <p style="color: var(--text-dim);">Select an action</p>
+            <p style="color: var(--text-dim);">Choose your destination</p>
         </div>
         <div class="dashboard">
             <div class="choice-card" onclick="showPublish()">
                 <span style="font-size: 40px;">⬆️</span>
                 <h3>Publish</h3>
+                <p style="color: var(--text-dim); font-size: 0.7rem;">Upload new project</p>
             </div>
             <div class="choice-card" onclick="showStore()">
                 <span style="font-size: 40px;">📥</span>
                 <h3>Download</h3>
+                <p style="color: var(--text-dim); font-size: 0.7rem;">Browse library</p>
             </div>
         </div>
     </div>
 
     <div id="publish-page" class="card hidden">
         <h2 style="color: var(--accent);">Submit Project</h2>
-        <input type="text" id="game-name" placeholder="Game Name" required>
-        <textarea id="game-desc" placeholder="Game Description" rows="4"></textarea>
+        <input type="text" id="game-name" placeholder="Game Name">
+        <textarea id="game-desc" placeholder="Game Description (e.g. controls, story...)" rows="4"></textarea>
+        <input type="text" id="game-url" placeholder="Download Link (Google Drive, Dropbox, etc.)">
         
-        <input type="url" id="game-url" placeholder="Game File URL (Drive, Mega, etc.)" required>
+        <p style="font-size: 0.8rem; color: var(--text-dim); text-align: left; margin-bottom: 5px;">Thumbnail Image:</p>
+        <input type="file" style="border: none; padding-left: 0;">
         
-        <p style="font-size: 0.8rem; color: var(--text-dim);">Thumbnail (Optional):</p>
-        <input type="file" style="border: none;">
-        
-        <button class="btn" onclick="submitGame()">Submit for Review</button>
+        <button class="btn" onclick="submitGame()">Upload to Forge</button>
         <button class="btn" onclick="backToDashboard()" style="background: #333; color: white;">Cancel</button>
     </div>
 
     <div id="store-page" class="card hidden">
         <h2 style="color: var(--accent);">Library</h2>
         <div style="text-align: left; background: #000; padding: 15px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
-            <span>Cyber Racer 2026</span>
-            <button class="btn" style="width: auto; margin: 0; padding: 5px 15px;">Get</button>
+            <div>
+                <span style="display: block; font-weight: bold;">Cyber Racer 2026</span>
+                <small style="color: var(--text-dim);">By Admin</small>
+            </div>
+            <button class="btn" style="width: auto; margin: 0; padding: 5px 15px;" onclick="alert('Starting download...')">Get</button>
         </div>
-        <button class="btn" onclick="backToDashboard()" style="background: #333; color: white;">Back</button>
+        <button class="btn" onclick="backToDashboard()" style="background: #333; color: white;">Back to Menu</button>
     </div>
 
     <script>
+        // Logic to switch views
         function goToDashboard() {
             const email = document.getElementById('user-email').value;
             if (email.includes("@")) {
                 hideAll();
                 document.getElementById('dashboard-page').classList.remove('hidden');
                 document.getElementById('welcome-msg').innerText = "Hello, " + email.split('@')[0] + "!";
-            } else { alert("Please enter a valid email."); }
+            } else { 
+                alert("Please enter a valid email address to log in."); 
+            }
         }
 
-        function showPublish() { hideAll(); document.getElementById('publish-page').classList.remove('hidden'); }
-        function showStore() { hideAll(); document.getElementById('store-page').classList.remove('hidden'); }
-        function backToDashboard() { hideAll(); document.getElementById('dashboard-page').classList.remove('hidden'); }
+        // Show specific sections
+        function showPublish() { 
+            hideAll(); 
+            document.getElementById('publish-page').classList.remove('hidden'); 
+        }
 
+        function showStore() { 
+            hideAll(); 
+            document.getElementById('store-page').classList.remove('hidden'); 
+        }
+
+        function backToDashboard() { 
+            hideAll(); 
+            document.getElementById('dashboard-page').classList.remove('hidden'); 
+        }
+
+        // Master function to hide all screens
         function hideAll() {
             document.getElementById('login-page').classList.add('hidden');
             document.getElementById('dashboard-page').classList.add('hidden');
@@ -149,30 +178,14 @@
             document.getElementById('store-page').classList.add('hidden');
         }
 
-        // UPDATED SUBMISSION LOGIC
+        // Action for submitting a game
         function submitGame() {
             const name = document.getElementById('game-name').value;
-            const desc = document.getElementById('game-desc').value;
-            const url = document.getElementById('game-url').value;
-
-            // Check if URL and Name are empty
-            if (!name || !url) {
-                alert("Please provide both a Game Name and a Download URL.");
+            if(name === "") {
+                alert("Please at least enter a Game Name!");
                 return;
             }
-
-            // Create the Email Data
-            const subject = encodeURIComponent("Game Review Request: " + name);
-            const body = encodeURIComponent(
-                "Game Name: " + name + "\n\n" +
-                "Description: " + desc + "\n\n" +
-                "Download URL: " + url
-            );
-
-            // Open Email Client
-            window.location.href = `mailto:indiegamesio@gmail.com?subject=${subject}&body=${body}`;
-
-            alert("Opening your email client to send the review...");
+            alert("Success! Your game '" + name + "' has been sent for review.");
             backToDashboard();
         }
     </script>
