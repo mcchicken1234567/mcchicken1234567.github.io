@@ -105,7 +105,7 @@
         <button class="btn" onclick="goToDashboard()">Sign In</button>
     </div>
 
-    <div id="dashboard-page" class="hidden">
+  <div id="dashboard-page" class="hidden">
         <div style="text-align: center; margin-bottom: 30px;">
             <h2 id="welcome-msg">Welcome back!</h2>
             <p style="color: var(--text-dim);">What would you like to do today?</p>
@@ -118,34 +118,48 @@
                 <p style="font-size: 0.8rem; color: var(--text-dim);">Upload your game files</p>
             </div>
 
-            <div class="choice-card" onclick="alert('Redirecting to Store...')">
+            <div class="choice-card" onclick="showStore()">
                 <span style="font-size: 40px;">📥</span>
                 <h3>Download</h3>
                 <p style="font-size: 0.8rem; color: var(--text-dim);">Browse the library</p>
             </div>
         </div>
+    </div>
+
+    <div id="store-page" class="hidden" style="width: 100%; max-width: 800px; padding: 20px;">
+        <h2 style="color: var(--accent);">Available Games</h2>
+        <div style="background: var(--surface); padding: 20px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong style="display: block;">Cyber Racer 2026</strong>
+                <span style="color: var(--text-dim); font-size: 0.8rem;">Version 1.2 • 45MB</span>
+            </div>
+            <a href="YOUR_DOWNLOAD_LINK_HERE" class="btn" style="width: auto; padding: 10px 20px;">Download Now</a>
+        </div>
         
-        <p style="text-align: center; margin-top: 30px;">
-            <a href="#" onclick="location.reload()" style="color: var(--text-dim); font-size: 0.8rem;">Sign Out</a>
-        </p>
+        <button class="btn" onclick="backToDashboard()" style="margin-top: 20px; background: #333; color: white;">← Back</button>
     </div>
 
     <script>
         function goToDashboard() {
             const email = document.getElementById('user-email').value;
-            
             if (email.includes("@")) {
-                // Hide login
                 document.getElementById('login-page').classList.add('hidden');
-                
-                // Show dashboard
                 document.getElementById('dashboard-page').classList.remove('hidden');
-                
-                // Set welcome message
                 document.getElementById('welcome-msg').innerText = "Hello, " + email.split('@')[0] + "!";
             } else {
                 alert("Please enter a valid email address.");
             }
+        }
+
+        // Functions to switch between pages
+        function showStore() {
+            document.getElementById('dashboard-page').classList.add('hidden');
+            document.getElementById('store-page').classList.remove('hidden');
+        }
+
+        function backToDashboard() {
+            document.getElementById('store-page').classList.add('hidden');
+            document.getElementById('dashboard-page').classList.remove('hidden');
         }
     </script>
 
